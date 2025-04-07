@@ -40,6 +40,7 @@ public class WorkspaceEntity {
     @Column(nullable = false)
     private List<Long> membersId;
 
+    //Здесь должен быть json
     @Column(nullable = false)
-    private JsonNode settings;
+    private String settings;
 }

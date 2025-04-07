@@ -1,13 +1,12 @@
 services:
-  auth-service:
+  space-service:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8083:8083"
+      - "8082:8082"
     depends_on:
       - postgres
-      - redis
     healthcheck:
       test: "curl --fail --silent localhost:8083/actuator/health | grep UP || exit 1"
       interval: 20s
@@ -25,8 +24,3 @@ services:
       - '5425:5432'
     expose:
       - '5425'
-
-  redis:
-    image: 'redis:latest'
-    ports:
-      - '6379:6379'
