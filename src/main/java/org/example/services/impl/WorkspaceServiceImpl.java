@@ -23,13 +23,12 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     public WorkspaceDto saveWorkspace(WorkspaceDto workspaceDto) {
-//        return mapper.mapFromDto(workspaceRepository.save(workspaceDto));
-        return workspaceRepository.save(mapper.mapFromDto(workspaceDto))
+        return mapper.mapToDto(workspaceRepository.save(mapper.mapFromDto(workspaceDto)));
     }
 
     @Override
     public WorkspaceDto updateWorkspace(WorkspaceDto workspaceDto) {
-        return mapper.mapToDto(workspaceRepository.save(workspaceDto));
+        return mapper.mapToDto(workspaceRepository.save(mapper.mapFromDto(workspaceDto)));
     }
 
     @Override

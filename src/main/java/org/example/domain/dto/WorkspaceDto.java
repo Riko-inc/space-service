@@ -20,5 +20,5 @@ public class WorkspaceDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<Long> membersId;
-    private WorkspaceSettingsDto settings;
+    private String settings;
 }
