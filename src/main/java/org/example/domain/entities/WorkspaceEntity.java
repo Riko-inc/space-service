@@ -17,7 +17,7 @@ import java.util.List;
 @Table(schema = "space-service", name = "workspaces")
 public class WorkspaceEntity {
     @Id
-    @SequenceGenerator(name = "workspace_seq", sequenceName = "worksapce_sequence")
+    @SequenceGenerator(name = "workspace_seq", sequenceName = "workspace_sequence")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long workspaceId;
 
