@@ -2,10 +2,15 @@ package org.example.controllers;
 
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.WorkspaceDto;
+import org.example.domain.entities.UserEntity;
 import org.example.services.WorkspaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,8 +29,8 @@ public class WorkspaceController {
     }
 
     @PostMapping("/save_workspace")
-    public ResponseEntity<String> createWorkspace(@RequestBody WorkspaceDto workspace) {
-        workspaceService.saveWorkspace(workspace);
+    public ResponseEntity<String> createWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceDto workspace) {
+        workspaceService.saveWorkspace(workspace, user);
         return new ResponseEntity<>("Workspace created", HttpStatus.CREATED);
     }
 

@@ -47,7 +47,11 @@ public class WebSecurityConfig {
             "/webjars/**",
             "/docs",
             "/error",
-            "/swagger-ui.html"};
+            "/swagger-ui.html",
+
+//            "/workspaces/**", //Это потому что я не понял как через постман с jwt работать
+//            "/workspaces", //Это потому что я не понял как через постман с jwt работать
+    };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;

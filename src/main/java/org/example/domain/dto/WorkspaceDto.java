@@ -16,7 +16,7 @@ public class WorkspaceDto {
     private long workspaceId;
     private String workspaceName;
     private String workspaceDescription;
-    private int ownerId;
+    private Long ownerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<Long> membersId;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(schema = "space-service", name = "workspaces")
+@Accessors(chain = true)
 public class WorkspaceEntity {
     @Id
     @SequenceGenerator(name = "workspace_seq", sequenceName = "workspace_sequence")
@@ -28,7 +30,7 @@ public class WorkspaceEntity {
     private String workspaceDescription;
 
     @Column(nullable = false)
-    private int ownerId;
+    private Long ownerId;
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdAt;

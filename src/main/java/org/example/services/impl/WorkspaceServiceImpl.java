@@ -2,12 +2,16 @@ package org.example.services.impl;
 
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.WorkspaceDto;
+import org.example.domain.entities.UserEntity;
 import org.example.domain.entities.WorkspaceEntity;
 import org.example.mappers.Mapper;
 import org.example.repositories.WorkspaceRepository;
 import org.example.services.WorkspaceService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,13 +26,37 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
-    public WorkspaceDto saveWorkspace(WorkspaceDto workspaceDto) {
-        return mapper.mapToDto(workspaceRepository.save(mapper.mapFromDto(workspaceDto)));
+    public WorkspaceDto saveWorkspace(WorkspaceDto workspaceDto, UserDetails user) {
+        UserEntity userEntity = (UserEntity) user;
+//       return WorkspaceDto.builder()
+//                .ownerId(userEntity.getUserId())
+//                .workspaceName(workspaceDto.getWorkspaceName())
+//                .workspaceDescription(workspaceDto.getWorkspaceDescription())
+//               .settings(workspaceDto.getSettings())
+//                .createdAt(LocalDateTime.now())
+//                .updatedAt(LocalDateTime.now())
+//               .membersId(workspaceDto.getMembersId())
+//                .build();
+
+        return mapper.mapToDto(workspaceRepository.save(
+                mapper.mapFromDto(workspaceDto)
+                        .setOwnerId(userEntity.getUserId())
+                        .setCreatedAt(LocalDateTime.now())
+                        .setUpdatedAt(LocalDateTime.now())
+        ));
     }
 
     @Override
     public WorkspaceDto updateWorkspace(WorkspaceDto workspaceDto) {
-        return mapper.mapToDto(workspaceRepository.save(mapper.mapFromDto(workspaceDto)));
+        return WorkspaceDto.builder()
+                .updatedAt(LocalDateTime.now())
+                .workspaceName(workspaceDto.getWorkspaceName())
+                .workspaceDescription(workspaceDto.getWorkspaceDescription())
+                .ownerId(workspaceDto.getOwnerId())
+                .settings(workspaceDto.getSettings())
+                .membersId(workspaceDto.getMembersId())
+                .build();
+//        return mapper.mapToDto(workspaceRepository.save(mapper.mapFromDto(workspaceDto)));
     }
 
     @Override
