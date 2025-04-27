@@ -48,9 +48,6 @@ public class WebSecurityConfig {
             "/docs",
             "/error",
             "/swagger-ui.html",
-
-//            "/workspaces/**", //Это потому что я не понял как через постман с jwt работать
-//            "/workspaces", //Это потому что я не понял как через постман с jwt работать
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -67,7 +64,6 @@ public class WebSecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler())
                         .authenticationEntryPoint(authenticationEntryPoint()))
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout.logoutUrl("/api/v1/auth/logout")
                         .logoutSuccessHandler((request, response, authentication) ->

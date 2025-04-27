@@ -10,7 +10,7 @@ import java.util.List;
 public interface WorkspaceService {
     List<WorkspaceDto> findAllWorkspaces();
     WorkspaceDto saveWorkspace(WorkspaceDto workspaceDto, UserDetails user);
-    WorkspaceDto updateWorkspace(WorkspaceDto workspaceDto);
-    void deleteWorkspaceById(long id);
-    WorkspaceDto findWorkspaceById(long id);
+    WorkspaceDto updateWorkspace(WorkspaceDto workspaceDto, UserDetails user);
+    void deleteWorkspaceById(Long id);
+    WorkspaceDto findWorkspaceById(Long id);
 }
