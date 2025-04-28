@@ -13,12 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class WorkspaceDto {
-    private long workspaceId;
+    private Long workspaceId;
     private String workspaceName;
     private String workspaceDescription;
-    private int ownerId;
+    private Long ownerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<Long> membersId;
+    private List<Long> membersIds;
     private String settings;
 }
