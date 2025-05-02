@@ -12,7 +12,7 @@ import lombok.*;
 @Table(schema = "space_service", name = "settings")
 public class SpaceSettings {
     @Id
-    @SequenceGenerator(name = "settings_seq", sequenceName = "settings_sequence")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long spaceSettingId;
+    @OneToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private WorkspaceEntity spaceSettingId;
 }
