@@ -1,11 +1,11 @@
-package org.example.services;
+package org.example.services.impl;
 
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.SpaceSettingsDto;
 import org.example.domain.entities.SpaceSettingsEntity;
 import org.example.mappers.Mapper;
 import org.example.repositories.SpaceSettingsRepository;
-import org.modelmapper.ModelMapper;
+import org.example.services.SpaceSettingsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
