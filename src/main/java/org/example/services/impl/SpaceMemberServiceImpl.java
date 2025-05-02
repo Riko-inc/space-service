@@ -34,7 +34,7 @@ public class SpaceMemberServiceImpl implements SpaceMemberService {
     }
 
     @Override
-    public SpaceMemberDto findSpaceMember(Long id) {
+    public SpaceMemberDto findSpaceMemberById(Long id) {
         return mapper.mapToDto(spaceMemberRepository.findById(id).orElse(null));
     }
 
