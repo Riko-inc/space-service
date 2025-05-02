@@ -1,12 +1,12 @@
 package org.example.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,6 +30,9 @@ public class WorkspaceEntity {
     private String workspaceDescription;
 
     @Column(nullable = false)
+    private String taskPrefix;
+
+    @Column(nullable = false)
     private Long ownerId;
 
     @JsonFormat(pattern = "dd-mm-yyyy HH:MM")
@@ -38,11 +41,12 @@ public class WorkspaceEntity {
     @JsonFormat(pattern = "dd-mm-yyyy HH:MM")
     private LocalDateTime updatedAt;
 
-    @ElementCollection
+    @OneToMany(fetch = FetchType.LAZY)
     @Column(nullable = false)
-    private List<Long> membersId;
+    @Builder.Default
+    private List<SpaceMember> membersId = new ArrayList<>();
 
-    //Здесь должен быть json
-    @Column(nullable = false)
-    private String settings;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private SpaceSettings settings;
 }
