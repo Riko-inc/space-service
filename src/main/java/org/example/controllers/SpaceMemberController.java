@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.SpaceMemberDto;
 import org.example.services.SpaceMemberService;
@@ -15,21 +16,25 @@ import org.springframework.web.bind.annotation.*;
 public class SpaceMemberController {
     private final SpaceMemberService spaceMemberService;
 
+    @SecurityRequirement(name = "JWT")
     @GetMapping("/{id}")
     public ResponseEntity<SpaceMemberDto> getSpaceMember(@PathVariable Long id) {
         return new ResponseEntity<>(spaceMemberService.findSpaceMemberById(id), HttpStatus.OK);
     }
 
+    @SecurityRequirement(name = "JWT")
     @PostMapping("/save_space_member")
     public ResponseEntity<SpaceMemberDto> saveSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberDto spaceMemberDto) {
         return new ResponseEntity<>(spaceMemberService.saveSpaceMember(spaceMemberDto, user), HttpStatus.CREATED);
     }
 
+    @SecurityRequirement(name = "JWT")
     @PostMapping("/update_space_member")
     public ResponseEntity<SpaceMemberDto> updateSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberDto spaceMemberDto) {
         return new ResponseEntity<>(spaceMemberService.updateSpaceMember(spaceMemberDto, user), HttpStatus.CREATED);
     }
 
+    @SecurityRequirement(name = "JWT")
     @DeleteMapping("/delete_space_member/{id}")
     public ResponseEntity<SpaceMemberDto> deleteSpaceMember(@PathVariable Long id) {
         spaceMemberService.deleteSpaceMember(id);
