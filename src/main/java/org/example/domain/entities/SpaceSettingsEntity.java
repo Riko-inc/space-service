@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Table(schema = "space_service", name = "settings")
-public class SpaceSettings {
+public class SpaceSettingsEntity {
     @Id
     @OneToOne(optional = false)
     @JoinColumn(nullable = false)

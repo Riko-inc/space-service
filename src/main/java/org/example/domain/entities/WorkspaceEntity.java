@@ -44,9 +44,9 @@ public class WorkspaceEntity {
     @OneToMany(fetch = FetchType.LAZY)
     @Column(nullable = false)
     @Builder.Default
-    private List<SpaceMember> membersId = new ArrayList<>();
+    private List<SpaceMemberEntity> membersId = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private SpaceSettings settings;
+    private SpaceSettingsEntity settings;
 }

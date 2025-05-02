@@ -16,9 +16,10 @@ public class WorkspaceDto {
     private Long workspaceId;
     private String workspaceName;
     private String workspaceDescription;
+    private String taskPrefix;
     private Long ownerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<Long> membersIds;
-    private String settings;
+    private List<SpaceMemberDto> members;
+    private SpaceSettingsDto settings;
 }

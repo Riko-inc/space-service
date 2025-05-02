@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(schema = "space_service", name = "members")
-public class SpaceMember {
+public class SpaceMemberEntity {
     @Getter
     public enum Role {
         OWNER(0), MEMBER(1), READER(2);
@@ -38,5 +38,5 @@ public class SpaceMember {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private SpaceMember invitedByMember;
+    private SpaceMemberEntity invitedByMember;
 }
