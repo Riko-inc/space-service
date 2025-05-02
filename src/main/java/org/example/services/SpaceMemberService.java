@@ -7,5 +7,5 @@ public interface SpaceMemberService {
     SpaceMemberDto saveSpaceMember(SpaceMemberDto spaceMemberDto, UserDetails user);
     SpaceMemberDto updateSpaceMember(SpaceMemberDto spaceMemberDto, UserDetails user);
     SpaceMemberDto findSpaceMember(Long id);
-    void removeSpaceMember(Long id);
+    void deleteSpaceMember(Long id);
 }

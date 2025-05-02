@@ -3,6 +3,7 @@ package org.example.domain.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Accessors(chain = true)
 @Table(schema = "space_service", name = "members")
 public class SpaceMemberEntity {
     @Getter
@@ -37,6 +39,6 @@ public class SpaceMemberEntity {
     private LocalDateTime invitedDateTime;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn()
     private SpaceMemberEntity invitedByMember;
 }
