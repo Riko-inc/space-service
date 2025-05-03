@@ -1,16 +1,20 @@
 package org.example.services.impl;
 
 import lombok.AllArgsConstructor;
+import org.example.domain.dto.SpaceMemberDto;
 import org.example.domain.dto.WorkspaceDto;
 import org.example.domain.entities.SpaceMemberEntity;
 import org.example.domain.entities.SpaceSettingsEntity;
 import org.example.domain.entities.UserEntity;
 import org.example.domain.entities.WorkspaceEntity;
 import org.example.mappers.Mapper;
+import org.example.repositories.SpaceMemberRepository;
 import org.example.repositories.WorkspaceRepository;
+import org.example.services.SpaceMemberService;
 import org.example.services.WorkspaceService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +30,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         return workspaceRepository.findAll().stream().map(mapper::mapToDto).toList();
     }
 
+    @Transactional
     @Override
     public WorkspaceDto saveWorkspace(WorkspaceDto workspaceDto, UserDetails user) {
         UserEntity userEntity = (UserEntity) user;
