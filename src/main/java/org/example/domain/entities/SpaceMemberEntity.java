@@ -41,4 +41,8 @@ public class SpaceMemberEntity {
     @ManyToOne
     @JoinColumn()
     private SpaceMemberEntity invitedByMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id", nullable = false)
+    private WorkspaceEntity workspace;
 }

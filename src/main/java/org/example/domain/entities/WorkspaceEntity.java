@@ -41,12 +41,21 @@ public class WorkspaceEntity {
     @JsonFormat(pattern = "dd-mm-yyyy HH:MM")
     private LocalDateTime updatedAt;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @Column(nullable = false)
+    // Я не шарю, чё здесь написано. Это гпт сказал так сделать. Надо будет разобраться
+    @OneToMany(
+            mappedBy = "workspace",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
     @Builder.Default
-    private List<SpaceMemberEntity> membersId = new ArrayList<>();
+    private List<SpaceMemberEntity> members = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(
+            mappedBy = "workspace",
+            cascade = CascadeType.ALL,
+            optional = false
+    )
     @JoinColumn(nullable = false)
     private SpaceSettingsEntity settings;
 }

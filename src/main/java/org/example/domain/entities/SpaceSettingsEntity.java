@@ -18,5 +18,5 @@ public class SpaceSettingsEntity {
 
     @OneToOne(optional = false)
     @JoinColumn(nullable = false)
-    private WorkspaceEntity spaceSettings;
+    private WorkspaceEntity workspace;
 }

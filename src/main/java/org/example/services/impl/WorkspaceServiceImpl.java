@@ -2,6 +2,8 @@ package org.example.services.impl;
 
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.WorkspaceDto;
+import org.example.domain.entities.SpaceMemberEntity;
+import org.example.domain.entities.SpaceSettingsEntity;
 import org.example.domain.entities.UserEntity;
 import org.example.domain.entities.WorkspaceEntity;
 import org.example.mappers.Mapper;
@@ -27,12 +29,25 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Override
     public WorkspaceDto saveWorkspace(WorkspaceDto workspaceDto, UserDetails user) {
         UserEntity userEntity = (UserEntity) user;
-        return mapper.mapToDto(workspaceRepository.save(
-                mapper.mapFromDto(workspaceDto)
-                        .setOwnerId(userEntity.getUserId())
-                        .setCreatedAt(LocalDateTime.now())
-                        .setUpdatedAt(LocalDateTime.now())
-        ));
+        WorkspaceEntity workspace = mapper.mapFromDto(workspaceDto)
+                .setOwnerId(userEntity.getUserId())
+                .setCreatedAt(LocalDateTime.now())
+                .setUpdatedAt(LocalDateTime.now());
+
+        SpaceSettingsEntity settings = SpaceSettingsEntity.builder()
+                .workspace(workspace)
+                .build();
+        workspace.setSettings(settings);
+
+        SpaceMemberEntity ownerMember = SpaceMemberEntity.builder()
+                .role(SpaceMemberEntity.Role.OWNER)
+                .invitedDateTime(LocalDateTime.now())
+                .workspace(workspace)
+                .build();
+
+        workspace.getMembers().add(ownerMember);
+        return mapper.mapToDto(workspaceRepository.save(workspace));
+
     }
 
     @Override
