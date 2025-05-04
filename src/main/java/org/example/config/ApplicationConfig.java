@@ -20,6 +20,7 @@ public class ApplicationConfig {
 
     private final AuthClientService authClientService;
 
+    // TODO: Привести в соответствие с task-service, убрав лишнее
     @Bean
     public UserDetailsService userDetailsService() {
         log.warn("UserDetailsService, which is deprecated is used");

@@ -21,12 +21,13 @@ public class SpaceSettingsServiceImpl implements SpaceSettingsService {
 
     @Override
     public SpaceSettingsDto updateSpaceSettings(SpaceSettingsDto spaceSettingsDto, UserDetails user) {
+        //TODO: Добавить проверку, что переданная spaceSettingsDto существует в БД (А то понапихают говна через контроллер)
         return mapper.mapToDto(spaceSettingsRepository.save( mapper.mapFromDto(spaceSettingsDto)));
     }
 
     @Override
     public SpaceSettingsDto findSpaceSettingsById(Long id) {
-        return mapper.mapToDto(spaceSettingsRepository.findById(id).orElse(null));
+        return mapper.mapToDto(spaceSettingsRepository.findById(id).orElse(null)); //TODO: Выбросит null через контроллер. Обработать
     }
 
     @Override

@@ -22,13 +22,14 @@ public class SpaceMemberServiceImpl implements SpaceMemberService {
         UserEntity userEntity = (UserEntity) user;
         return mapper.mapToDto(spaceMemberRepository.save(
                 mapper.mapFromDto(spaceMemberDto)
-                        .setInvitedByMember(spaceMemberRepository.findById(userEntity.getUserId()).orElse(null))
-                        .setInvitedDateTime(LocalDateTime.now())
+                        .setInvitedByMember(spaceMemberRepository.findById(userEntity.getUserId()).orElse(null)) //TODO: Не доставать из БД, у нас же и так есть UserDetails, отправивший запрос
+                        .setInvitedDateTime(LocalDateTime.now()) //TODO: Убрать после добавления аннотаций в Entity
         ));
     }
 
     @Override
     public SpaceMemberDto updateSpaceMember(SpaceMemberDto spaceMemberDto, UserDetails user) {
+        //TODO: Добавить проверку, что переданная spaceMemberDto существует в БД (А то понапихают говна через контроллер)
         UserEntity userEntity = (UserEntity) user;
         return mapper.mapToDto(spaceMemberRepository.save(mapper.mapFromDto(spaceMemberDto)));
     }

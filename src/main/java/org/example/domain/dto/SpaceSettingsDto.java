@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+/** TODO:
+ *  А эт зачем?
+ *  @see WorkspaceSettingsDto
+ */
 public class SpaceSettingsDto {
     private Long spaceSettingsId;
 }

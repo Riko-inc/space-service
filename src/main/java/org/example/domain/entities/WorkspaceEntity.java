@@ -27,7 +27,7 @@ public class WorkspaceEntity {
     private String workspaceName;
 
     @Column(nullable = false)
-    private String workspaceDescription;
+    private String workspaceDescription; //TODO: Может быть null
 
     @Column(nullable = false)
     private String taskPrefix;
@@ -35,13 +35,13 @@ public class WorkspaceEntity {
     @Column(nullable = false)
     private Long ownerId;
 
-    @JsonFormat(pattern = "dd-mm-yyyy HH:MM")
+    @JsonFormat(pattern = "dd-mm-yyyy HH:MM") //TODO: Есть аннотации, которые проставляют автоматически, надо добавить
     private LocalDateTime createdAt;
 
-    @JsonFormat(pattern = "dd-mm-yyyy HH:MM")
+    @JsonFormat(pattern = "dd-mm-yyyy HH:MM") //TODO: Есть аннотации, которые проставляют автоматически, надо добавить
     private LocalDateTime updatedAt;
 
-    // Я не шарю, чё здесь написано. Это гпт сказал так сделать. Надо будет разобраться
+    // Я не шарю, чё здесь написано. Это гпт сказал так сделать. Надо будет TODO: разобраться
     @OneToMany(
             mappedBy = "workspace",
             cascade = CascadeType.ALL,
@@ -54,8 +54,8 @@ public class WorkspaceEntity {
     @OneToOne(
             mappedBy = "workspace",
             cascade = CascadeType.ALL,
-            optional = false
-    )
+            optional = false,
+            orphanRemoval = true)
     @JoinColumn(nullable = false)
     private SpaceSettingsEntity settings;
 }

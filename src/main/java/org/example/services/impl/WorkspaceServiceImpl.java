@@ -36,13 +36,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         UserEntity userEntity = (UserEntity) user;
         WorkspaceEntity workspace = mapper.mapFromDto(workspaceDto)
                 .setOwnerId(userEntity.getUserId())
-                .setCreatedAt(LocalDateTime.now())
-                .setUpdatedAt(LocalDateTime.now());
+                .setCreatedAt(LocalDateTime.now()) //TODO: Убрать после добавления аннотаций в Entity
+                .setUpdatedAt(LocalDateTime.now()); //TODO: Убрать после добавления аннотаций в Entity
 
-        SpaceSettingsEntity settings = SpaceSettingsEntity.builder()
+        workspace.setSettings(SpaceSettingsEntity.builder()
                 .workspace(workspace)
-                .build();
-        workspace.setSettings(settings);
+                .build());
+
 
         SpaceMemberEntity ownerMember = SpaceMemberEntity.builder()
                 .role(SpaceMemberEntity.Role.OWNER)
@@ -50,13 +50,14 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .workspace(workspace)
                 .build();
 
-        workspace.getMembers().add(ownerMember);
-        return mapper.mapToDto(workspaceRepository.save(workspace));
+        workspace.setMembers(List.of(ownerMember));
 
+        return mapper.mapToDto(workspaceRepository.save(workspace));
     }
 
     @Override
     public WorkspaceDto updateWorkspace(WorkspaceDto workspaceDto, UserDetails user) {
+        //TODO: Добавить проверку, что переданная workspaceDto существует в БД (А то понапихают говна через контроллер)
         UserEntity userEntity = (UserEntity) user;
         return mapper.mapToDto(workspaceRepository.save(
                 mapper.mapFromDto(workspaceDto)
@@ -71,6 +72,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     public WorkspaceDto findWorkspaceById(Long id) {
-        return mapper.mapToDto(workspaceRepository.findById(id).orElse(null));
+        return mapper.mapToDto(workspaceRepository.findById(id).orElse(null)); //TODO: Выбросит null через контроллер. Обработать
     }
 }
