@@ -51,8 +51,6 @@ public class WebSecurityConfig {
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider; // TODO: Убрать ненужное
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

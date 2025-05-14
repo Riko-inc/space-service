@@ -1,5 +1,6 @@
 package org.example.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.SpaceMemberDto;
 import org.example.domain.entities.SpaceMemberEntity;
@@ -22,15 +23,16 @@ public class SpaceMemberServiceImpl implements SpaceMemberService {
         UserEntity userEntity = (UserEntity) user;
         return mapper.mapToDto(spaceMemberRepository.save(
                 mapper.mapFromDto(spaceMemberDto)
-                        .setInvitedByMember(spaceMemberRepository.findById(userEntity.getUserId()).orElse(null)) //TODO: Не доставать из БД, у нас же и так есть UserDetails, отправивший запрос
-                        .setInvitedDateTime(LocalDateTime.now()) //TODO: Убрать после добавления аннотаций в Entity
+//                        .setInvitedByMember(spaceMemberRepository.findById(userEntity.getUserId()).orElse(null))
+                        .setInvitedByMember(mapper.mapFromDto((SpaceMemberDto) user)) //TODO: Не доставать из БД, у нас же и так есть UserDetails, отправивший запрос
         ));
     }
 
     @Override
     public SpaceMemberDto updateSpaceMember(SpaceMemberDto spaceMemberDto, UserDetails user) {
-        //TODO: Добавить проверку, что переданная spaceMemberDto существует в БД (А то понапихают говна через контроллер)
         UserEntity userEntity = (UserEntity) user;
+        SpaceMemberEntity spaceMemberEntity = spaceMemberRepository.findById(spaceMemberDto.getMemberId())
+                .orElseThrow(() -> new EntityNotFoundException("Member " + spaceMemberDto.getMemberId() + " not found"));
         return mapper.mapToDto(spaceMemberRepository.save(mapper.mapFromDto(spaceMemberDto)));
     }
 

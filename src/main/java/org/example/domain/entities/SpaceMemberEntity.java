@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +37,10 @@ public class SpaceMemberEntity {
     @Builder.Default
     private Role role = Role.READER;
 
-    @JsonFormat(pattern = "dd-mm-yyyy HH:MM")
+    @Column(nullable = false)
+    @CreatedDate
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime invitedDateTime;
 
     @ManyToOne

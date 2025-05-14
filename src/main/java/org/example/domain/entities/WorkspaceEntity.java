@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,8 +31,7 @@ public class WorkspaceEntity {
     @Column(nullable = false)
     private String workspaceName;
 
-    @Column(nullable = false)
-    private String workspaceDescription; //TODO: Может быть null
+    private String workspaceDescription;
 
     @Column(nullable = false)
     private String taskPrefix;
@@ -35,13 +39,18 @@ public class WorkspaceEntity {
     @Column(nullable = false)
     private Long ownerId;
 
-    @JsonFormat(pattern = "dd-mm-yyyy HH:MM") //TODO: Есть аннотации, которые проставляют автоматически, надо добавить
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    @CreatedDate
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+    private LocalDateTime createdDate;
 
-    @JsonFormat(pattern = "dd-mm-yyyy HH:MM") //TODO: Есть аннотации, которые проставляют автоматически, надо добавить
+    @Column(nullable = false)
+    @LastModifiedDate
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime updatedAt;
 
-    // Я не шарю, чё здесь написано. Это гпт сказал так сделать. Надо будет TODO: разобраться
     @OneToMany(
             mappedBy = "workspace",
             cascade = CascadeType.ALL,

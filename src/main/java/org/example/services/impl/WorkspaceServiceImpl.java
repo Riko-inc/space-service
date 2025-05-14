@@ -1,5 +1,6 @@
 package org.example.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.SpaceMemberDto;
 import org.example.domain.dto.WorkspaceDto;
@@ -8,10 +9,7 @@ import org.example.domain.entities.SpaceSettingsEntity;
 import org.example.domain.entities.UserEntity;
 import org.example.domain.entities.WorkspaceEntity;
 import org.example.mappers.Mapper;
-import org.example.repositories.SpaceMemberRepository;
-import org.example.repositories.WorkspaceRepository;
-import org.example.services.SpaceMemberService;
-import org.example.services.WorkspaceService;
+import org.example.repositories.WorkspaceRepository;import org.example.services.WorkspaceService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,15 +28,17 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         return workspaceRepository.findAll().stream().map(mapper::mapToDto).toList();
     }
 
+    @Override
+    public List<SpaceMemberDto> findAllSpaceMembers(WorkspaceDto workspace, UserDetails user) {
+        return List.of();
+    }
+
     @Transactional
     @Override
     public WorkspaceDto saveWorkspace(WorkspaceDto workspaceDto, UserDetails user) {
         UserEntity userEntity = (UserEntity) user;
         WorkspaceEntity workspace = mapper.mapFromDto(workspaceDto)
-                .setOwnerId(userEntity.getUserId())
-                .setCreatedAt(LocalDateTime.now()) //TODO: Убрать после добавления аннотаций в Entity
-                .setUpdatedAt(LocalDateTime.now()); //TODO: Убрать после добавления аннотаций в Entity
-
+                .setOwnerId(userEntity.getUserId());
         workspace.setSettings(SpaceSettingsEntity.builder()
                 .workspace(workspace)
                 .build());
@@ -57,12 +57,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     public WorkspaceDto updateWorkspace(WorkspaceDto workspaceDto, UserDetails user) {
-        //TODO: Добавить проверку, что переданная workspaceDto существует в БД (А то понапихают говна через контроллер)
         UserEntity userEntity = (UserEntity) user;
+        WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceDto.getWorkspaceId())
+                .orElseThrow(() -> new EntityNotFoundException("Workspace " + workspaceDto.getWorkspaceId() + " not found"));
         return mapper.mapToDto(workspaceRepository.save(
-                mapper.mapFromDto(workspaceDto)
-                        .setUpdatedAt(LocalDateTime.now())
-        ));
+                mapper.mapFromDto(workspaceDto)));
     }
 
     @Override
@@ -72,6 +71,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     public WorkspaceDto findWorkspaceById(Long id) {
-        return mapper.mapToDto(workspaceRepository.findById(id).orElse(null)); //TODO: Выбросит null через контроллер. Обработать
+        return mapper.mapToDto(workspaceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Workspace " + id + " not found")));
     }
 }
