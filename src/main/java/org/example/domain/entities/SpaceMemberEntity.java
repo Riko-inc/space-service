@@ -29,8 +29,6 @@ public class SpaceMemberEntity {
     }
 
     @Id
-    @SequenceGenerator(name = "member_seq", sequenceName = "member_sequence")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long memberId;
 
     @Enumerated(EnumType.STRING)

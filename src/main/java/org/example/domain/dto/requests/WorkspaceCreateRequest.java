@@ -9,7 +9,7 @@ import lombok.Data;
 @Schema(description = "Запрос на создание нового пространства")
 public class WorkspaceCreateRequest {
     @Schema(description = "Название пространства", example = "MyAwesomeWorkspace")
-    @Size(max = 255, message = "Название пространства должно быть не длиннее 255 символов")
+    @Size(min = 1, max = 255, message = "Название пространства должно быть не длиннее 255 символов")
     @NotBlank(message = "Название пространства не должно быть пустым")
     private String workspaceName;
 

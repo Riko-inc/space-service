@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class SpaceMemberDto {
-    private Long memberId;
+    private Long memberId;                  // Совпадает с userId из auth-service
     private SpaceMemberEntity.Role role;
-    private LocalDateTime invitesDateTime;
+    private LocalDateTime invitedDateTime;
     private SpaceMemberDto invitedByMember;
 
 }

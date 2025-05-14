@@ -3,6 +3,8 @@ package org.example.controllers;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.WorkspaceDto;
+import org.example.domain.dto.requests.WorkspaceCreateRequest;
+import org.example.domain.dto.requests.WorkspaceUpdateRequest;
 import org.example.services.WorkspaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,40 +20,34 @@ import java.util.List;
 public class WorkspaceController {
     private final WorkspaceService workspaceService;
 
-    // TODO: Добавить пользователя в аргументы, понадобится для проверки прав
     @SecurityRequirement(name = "JWT")
     @GetMapping
-    public ResponseEntity<List<WorkspaceDto>> findAllWorkspaces() {
-        return new ResponseEntity<>(workspaceService.findAllWorkspaces(), HttpStatus.OK);
+    public ResponseEntity<List<WorkspaceDto>> findAllWorkspaces(UserDetails user) {
+        return new ResponseEntity<>(workspaceService.findAllWorkspaces(user), HttpStatus.OK);
     }
 
-    // TODO: Добавить пользователя в аргументы, понадобится для проверки прав
     @SecurityRequirement(name = "JWT")
     @GetMapping("/{id}")
-    public ResponseEntity<WorkspaceDto> findWorkspaceById(@PathVariable Long id) {
-        return new ResponseEntity<>(workspaceService.findWorkspaceById(id), HttpStatus.OK);
+    public ResponseEntity<WorkspaceDto> findWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
+        return new ResponseEntity<>(workspaceService.findWorkspaceById(id, user), HttpStatus.OK);
     }
 
-    // TODO: Убрать /save_workspace. Только после смены следующего эндпоинта на PUT
     @SecurityRequirement(name = "JWT")
-    @PostMapping("/save_workspace")
-    public ResponseEntity<WorkspaceDto> createWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceDto workspace) {
+    @PostMapping
+    public ResponseEntity<WorkspaceDto> createWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceCreateRequest workspace) {
         return new ResponseEntity<>(workspaceService.saveWorkspace(workspace, user), HttpStatus.CREATED);
     }
 
-    // TODO: Заменить метод на PUT. Убрать /update_workspace
     @SecurityRequirement(name = "JWT")
-    @PostMapping("/update_workspace")
-    public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceDto workspace) {
+    @PutMapping
+    public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceUpdateRequest workspace) {
         return new ResponseEntity<>(workspaceService.updateWorkspace(workspace, user), HttpStatus.OK);
     }
 
-    // TODO: Добавить пользователя в аргументы, понадобится для проверки прав
-    // TODO: Убрать /delete_workspace. Заменить статус код на OK
     @SecurityRequirement(name = "JWT")
-    @DeleteMapping("/delete_workspace/{id}")
-    public ResponseEntity<HttpStatus> deleteWorkspaceById(@PathVariable Long id) {
-        workspaceService.deleteWorkspaceById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
+        workspaceService.deleteWorkspaceById(id, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

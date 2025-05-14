@@ -5,10 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.example.domain.entities.SpaceMemberEntity;
 
-
 @Data
-@Schema(description = "Запрос на создание нового участника рабочего пространства")
-public class SpaceMemberCreateRequest {
+public class SpaceMemberUpdateRequest {
     @Schema(description = "id пользователя, которого нужно добавить")
     @NotNull(message = "id пользователя не должен быть пустым")
     private Long memberId;

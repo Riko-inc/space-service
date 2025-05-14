@@ -12,38 +12,32 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/space_settings") //TODO: Заменить space_settings на /space/settings. _ не поддерживается в некоторых браузерах
+@RequestMapping("/api/v1/space/settings")
 public class SpaceSettingsController {
     private final SpaceSettingsService spaceSettingsService;
 
-    // TODO: Добавить пользователя в аргументы, понадобится для проверки прав
     @SecurityRequirement(name = "JWT")
     @GetMapping("/{id}")
-    public ResponseEntity<SpaceSettingsDto> getSpaceSettings(@PathVariable Long id) {
-        return new ResponseEntity<>(spaceSettingsService.findSpaceSettingsById(id), HttpStatus.OK);
+    public ResponseEntity<SpaceSettingsDto> getSpaceSettings(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
+        return new ResponseEntity<>(spaceSettingsService.findSpaceSettingsById(id, user), HttpStatus.OK);
     }
 
-    // TODO: Заменить статус код на CREATED
-    // TODO: Убрать /save_settings. Только после смены следующего эндпоинта на PUT
     @SecurityRequirement(name = "JWT")
-    @PostMapping("/save_settings")
+    @PostMapping
     public ResponseEntity<SpaceSettingsDto> saveSettings(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceSettingsDto spaceSettingsDto) {
-        return new ResponseEntity<>(spaceSettingsService.saveSpaceSettings(spaceSettingsDto, user), HttpStatus.OK);
+        return new ResponseEntity<>(spaceSettingsService.saveSpaceSettings(spaceSettingsDto, user), HttpStatus.CREATED);
     }
 
-    // TODO: Заменить метод на PUT. Убрать /update_settings
     @SecurityRequirement(name = "JWT")
-    @PostMapping("/update_settings")
+    @PutMapping
     public ResponseEntity<SpaceSettingsDto> updateSettings(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceSettingsDto spaceSettingsDto) {
         return new ResponseEntity<>(spaceSettingsService.updateSpaceSettings(spaceSettingsDto, user), HttpStatus.OK);
     }
 
-    // TODO: Добавить пользователя в аргументы, понадобится для проверки прав
-    // TODO: Убрать /delete_settings. Заменить статус код на OK
     @SecurityRequirement(name = "JWT")
-    @DeleteMapping("/delete_settings/{id}")
-    public ResponseEntity<SpaceSettingsDto> deleteSettings(@PathVariable Long id) {
-        spaceSettingsService.removeSpaceSettingsById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SpaceSettingsDto> deleteSettings(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
+        spaceSettingsService.removeSpaceSettingsById(id, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

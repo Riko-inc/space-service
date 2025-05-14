@@ -15,7 +15,7 @@ import org.springframework.core.Ordered;
 public class ApplicationConfig {
     @EventListener(ApplicationReadyEvent.class)
     public void onAppStart() {
-        System.out.println("Documentation for task-service: http://localhost:8085/swagger-ui/index.html#/");
+        System.out.println("Documentation for space-service: http://localhost:8085/swagger-ui/index.html#/");
     }
 
     @Bean
