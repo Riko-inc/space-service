@@ -1,7 +1,7 @@
 package org.example.exceptions;
 
-import com.example.taskManagementSystem.domain.dto.responses.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.example.domain.dto.responses.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
