@@ -22,7 +22,7 @@ public class SpaceSettingsServiceImpl implements SpaceSettingsService {
     }
 
     @Override
-    public SpaceSettingsDto updateSpaceSettings(SpaceSettingsDto spaceSettingsDto, UserDetails user) {
+    public SpaceSettingsDto updateSpaceSettings(SpaceSettingsDto spaceSettingsDto, UserDetails user, Long settingId) {
         spaceSettingsRepository.findById(spaceSettingsDto.getSpaceSettingsId())
                 .orElseThrow(() -> new EntityNotFoundException("Workspace " + spaceSettingsDto.getSpaceSettingsId() + " not found"));
         return mapper.mapToDto(spaceSettingsRepository.save( mapper.mapFromDto(spaceSettingsDto)));

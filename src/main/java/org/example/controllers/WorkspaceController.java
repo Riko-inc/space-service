@@ -22,7 +22,7 @@ public class WorkspaceController {
 
     @SecurityRequirement(name = "JWT")
     @GetMapping
-    public ResponseEntity<List<WorkspaceDto>> findAllWorkspaces(UserDetails user) {
+    public ResponseEntity<List<WorkspaceDto>> findAllWorkspaces(@AuthenticationPrincipal UserDetails user) {
         return new ResponseEntity<>(workspaceService.findAllWorkspaces(user), HttpStatus.OK);
     }
 
@@ -35,13 +35,13 @@ public class WorkspaceController {
     @SecurityRequirement(name = "JWT")
     @PostMapping
     public ResponseEntity<WorkspaceDto> createWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceCreateRequest workspace) {
-        return new ResponseEntity<>(workspaceService.saveWorkspace(workspace, user), HttpStatus.CREATED);
+        return new ResponseEntity<>(workspaceService.createWorkspace(workspace, user), HttpStatus.CREATED);
     }
 
     @SecurityRequirement(name = "JWT")
-    @PutMapping
-    public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceUpdateRequest workspace) {
-        return new ResponseEntity<>(workspaceService.updateWorkspace(workspace, user), HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceUpdateRequest workspace,  @PathVariable Long id) {
+        return new ResponseEntity<>(workspaceService.updateWorkspace(workspace, user, id), HttpStatus.OK);
     }
 
     @SecurityRequirement(name = "JWT")

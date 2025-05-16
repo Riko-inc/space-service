@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,45 +23,39 @@ public class WorkspaceEntity {
     @Id
     @SequenceGenerator(name = "workspace_seq", sequenceName = "workspace_sequence")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "workspace_id")
     private Long workspaceId;
 
-    @Column(nullable = false)
+    @Column(name = "workspace_name", nullable = false)
     private String workspaceName;
 
+    @Column(name = "workspace_description")
     private String workspaceDescription;
 
-    @Column(nullable = false)
+    @Column(name = "task_prefix", nullable = false, updatable = false)
     private String taskPrefix;
 
-    @Column(nullable = false)
-    private Long ownerId;
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
+//    @JoinColumn(name = "space_member_id", nullable = false)
+//    private SpaceMemberEntity owner;
 
-    @Column(nullable = false)
+    @Column(name = "created_date_time", nullable = false)
     @CreatedDate
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
-    private LocalDateTime createdDate;
+    @Builder.Default
+    private LocalDateTime createdDateTime = LocalDateTime.now();
 
-    @Column(nullable = false)
+    @Column(name = "updated_date_time", nullable = false)
     @LastModifiedDate
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
-    private LocalDateTime updatedAt;
-
-    @OneToMany(
-            mappedBy = "workspace",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY
-    )
     @Builder.Default
-    private List<SpaceMemberEntity> members = new ArrayList<>();
+    private LocalDateTime updatedDateTime  = LocalDateTime.now();
 
-    @OneToOne(
-            mappedBy = "workspace",
-            cascade = CascadeType.ALL,
-            optional = false,
-            orphanRemoval = true)
-    @JoinColumn(nullable = false)
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<SpaceMemberEntity> members;
+
+    @OneToOne(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
     private SpaceSettingsEntity settings;
 }

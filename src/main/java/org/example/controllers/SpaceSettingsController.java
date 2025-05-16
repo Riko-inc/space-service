@@ -29,9 +29,9 @@ public class SpaceSettingsController {
     }
 
     @SecurityRequirement(name = "JWT")
-    @PutMapping
-    public ResponseEntity<SpaceSettingsDto> updateSettings(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceSettingsDto spaceSettingsDto) {
-        return new ResponseEntity<>(spaceSettingsService.updateSpaceSettings(spaceSettingsDto, user), HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<SpaceSettingsDto> updateSettings(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceSettingsDto spaceSettingsDto, @PathVariable Long id) {
+        return new ResponseEntity<>(spaceSettingsService.updateSpaceSettings(spaceSettingsDto, user, id), HttpStatus.OK);
     }
 
     @SecurityRequirement(name = "JWT")

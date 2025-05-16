@@ -3,6 +3,8 @@ package org.example.controllers;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.SpaceMemberDto;
+import org.example.domain.dto.requests.SpaceMemberAddRequest;
+import org.example.domain.dto.requests.SpaceMemberUpdateRequest;
 import org.example.services.SpaceMemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +26,14 @@ public class SpaceMemberController {
 
     @SecurityRequirement(name = "JWT")
     @PostMapping
-    public ResponseEntity<SpaceMemberDto> saveSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberDto spaceMemberDto) {
-        return new ResponseEntity<>(spaceMemberService.saveSpaceMember(spaceMemberDto, user), HttpStatus.CREATED);
+    public ResponseEntity<SpaceMemberDto> addSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberAddRequest request) {
+        return new ResponseEntity<>(spaceMemberService.addSpaceMember(request, user), HttpStatus.CREATED);
     }
 
     @SecurityRequirement(name = "JWT")
-    @PutMapping
-    public ResponseEntity<SpaceMemberDto> updateSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberDto spaceMemberDto) {
-        return new ResponseEntity<>(spaceMemberService.updateSpaceMember(spaceMemberDto, user), HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<SpaceMemberDto> updateSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberUpdateRequest request, @PathVariable Long id) {
+        return new ResponseEntity<>(spaceMemberService.updateSpaceMember(request, user, id), HttpStatus.OK);
     }
 
     @SecurityRequirement(name = "JWT")

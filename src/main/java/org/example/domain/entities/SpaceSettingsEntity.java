@@ -17,6 +17,6 @@ public class SpaceSettingsEntity {
     private Long spaceSettingsId;
 
     @OneToOne(optional = false)
-    @JoinColumn(nullable = false, name = "workspace_id")
+    @JoinColumn(name = "workspace_id", nullable = false, unique = true)
     private WorkspaceEntity workspace;
 }

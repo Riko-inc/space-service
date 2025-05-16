@@ -1,5 +1,6 @@
 package org.example.mappers.impl;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.domain.dto.WorkspaceDto;
 import org.example.domain.entities.WorkspaceEntity;

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,6 +31,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private final Mapper<WorkspaceEntity, WorkspaceCreateRequest> workspaceCreateRequestMapper;
     private final Mapper<WorkspaceEntity, WorkspaceUpdateRequest> workspaceUpdateRequestMapper;
 
+    // Пока получаем все пространства. Потом только те, в которых мы мемберы
     @Override
     public List<WorkspaceDto> findAllWorkspaces(UserDetails user) {
         return workspaceRepository.findAll().stream().map(mapper::mapToDto).toList();
@@ -42,44 +44,50 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Transactional
     @Override
-    public WorkspaceDto saveWorkspace(WorkspaceCreateRequest workspaceCreateRequest, UserDetails user) {
+    public WorkspaceDto createWorkspace(WorkspaceCreateRequest workspaceCreateRequest, UserDetails user) {
         UserEntity userEntity = (UserEntity) user;
-        WorkspaceEntity workspace = workspaceCreateRequestMapper.mapFromDto(workspaceCreateRequest)
-                .setOwnerId(userEntity.getUserId());
+        WorkspaceEntity workspace = workspaceCreateRequestMapper.mapFromDto(workspaceCreateRequest);
         workspace.setSettings(SpaceSettingsEntity.builder()
                 .workspace(workspace)
                 .build());
 
+        WorkspaceEntity savedWorkspace = workspaceRepository.save(workspace);
 
-        SpaceMemberEntity ownerMember = SpaceMemberEntity.builder()
+        SpaceMemberEntity owner = SpaceMemberEntity.builder()
                 .role(SpaceMemberEntity.Role.OWNER)
-                .invitedDateTime(LocalDateTime.now())
-                .workspace(workspace)
+                .userId(userEntity.getUserId())
+                .workspace(savedWorkspace)
                 .build();
 
-        workspace.setMembers(List.of(ownerMember));
+//        SpaceMemberEntity savedOwner = spaceMemberRepository.save(owner);
 
-        return mapper.mapToDto(workspaceRepository.save(workspace));
+        savedWorkspace.setMembers(new ArrayList<>(List.of(owner)));
+
+        return mapper.mapToDto(workspaceRepository.save(savedWorkspace));
     }
 
     @Override
-    public WorkspaceDto updateWorkspace(WorkspaceUpdateRequest workspaceUpdateRequest, UserDetails user) {
+    public WorkspaceDto updateWorkspace(WorkspaceUpdateRequest workspaceUpdateRequest, UserDetails user, Long workspaceId) {
         UserEntity userEntity = (UserEntity) user;
-        workspaceUpdateRequest.getMembers().forEach(newMember -> {
-            if (spaceMemberRepository.findById(newMember.getMemberId()).isEmpty()) {
-                spaceMemberRepository.save(SpaceMemberEntity.builder()
-                        .memberId(newMember.getMemberId())
-                        .role(newMember.getRole())
-                        .invitedByMember((spaceMemberRepository.findById(userEntity.getUserId())
-                                .orElseThrow(() -> new EntityNotFoundException("Member " + newMember.getMemberId() + " not found"))))
-                        .build());
-            }
-        });
 
-        workspaceRepository.findById(workspaceUpdateRequest.getWorkspaceId())
-                .orElseThrow(() -> new EntityNotFoundException("Workspace " + workspaceUpdateRequest.getWorkspaceId() + " not found"));
-        return mapper.mapToDto(workspaceRepository.save(
-                workspaceUpdateRequestMapper.mapFromDto(workspaceUpdateRequest)));
+        WorkspaceEntity workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new EntityNotFoundException("Workspace " + workspaceId + " not found"));
+
+        workspace.setWorkspaceDescription(workspaceUpdateRequest.getWorkspaceDescription());
+        workspace.setWorkspaceName(workspaceUpdateRequest.getWorkspaceName());
+
+//        workspaceUpdateRequest.getMembers().forEach(newMember -> {
+//            if (spaceMemberRepository.findById(newMember.getMemberId()).isEmpty()) {
+//                spaceMemberRepository.save(SpaceMemberEntity.builder()
+//                        .userId(newMember.getMemberId())
+//                        .role(newMember.getRole())
+//                        .workspace(workspace)
+//                        .invitedByMember((spaceMemberRepository.findById(userEntity.getUserId())
+//                                .orElseThrow(() -> new EntityNotFoundException("Member who invited with id " + newMember.getMemberId() + " was not found"))))
+//                        .build());
+//            }
+//        });
+        return mapper.mapToDto(workspaceRepository.save(workspaceUpdateRequestMapper.mapFromDto(workspaceUpdateRequest)));
     }
 
     @Override
@@ -89,6 +97,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     public WorkspaceDto findWorkspaceById(Long id, UserDetails user) {
-        return mapper.mapToDto(workspaceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Workspace " + id + " not found")));
+        return mapper.mapToDto(workspaceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Workspace " + id + " not found")));
     }
 }
