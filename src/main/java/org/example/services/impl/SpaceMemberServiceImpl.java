@@ -7,9 +7,11 @@ import org.example.domain.dto.requests.SpaceMemberAddRequest;
 import org.example.domain.dto.requests.SpaceMemberUpdateRequest;
 import org.example.domain.entities.SpaceMemberEntity;
 import org.example.domain.entities.UserEntity;
+import org.example.domain.entities.WorkspaceEntity;
 import org.example.exceptions.InvalidRequestParameterException;
 import org.example.mappers.Mapper;
 import org.example.repositories.SpaceMemberRepository;
+import org.example.repositories.WorkspaceRepository;
 import org.example.services.AuthClientService;
 import org.example.services.SpaceMemberService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class SpaceMemberServiceImpl implements SpaceMemberService {
     private final AuthClientService authService;
+    private final WorkspaceRepository workspaceRepository;
     private final SpaceMemberRepository spaceMemberRepository;
     private final Mapper<SpaceMemberEntity, SpaceMemberDto> responseMapper;
     private final Mapper<SpaceMemberEntity, SpaceMemberAddRequest> createRequestMapper;
@@ -27,6 +30,10 @@ public class SpaceMemberServiceImpl implements SpaceMemberService {
     @Override
     public SpaceMemberDto addSpaceMember(SpaceMemberAddRequest request, UserDetails user) {
         UserEntity userEntity = (UserEntity) user;
+
+        WorkspaceEntity workspace = workspaceRepository
+                .findById(request.getWorkspaceId())
+                .orElseThrow(() -> new EntityNotFoundException("Workspace with id "+ request.getWorkspaceId() +" not found"));
 
         if (!authService.checkUserIdExists(request.getUserId())) {
             throw new EntityNotFoundException("User with id " + request.getUserId() + " was not found");
@@ -37,7 +44,7 @@ public class SpaceMemberServiceImpl implements SpaceMemberService {
         }
 
         SpaceMemberEntity newMember = spaceMemberRepository.save(createRequestMapper.mapFromDto(request)
-                .setInvitedByMember(spaceMemberRepository.findById(userEntity.getUserId())
+                .setInvitedByMember(spaceMemberRepository.findSpaceMemberEntityByUserIdAndWorkspace(userEntity.getUserId(), workspace)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + userEntity.getUserId() + " not found"))
                 ));
 
