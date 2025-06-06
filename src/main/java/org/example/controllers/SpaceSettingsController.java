@@ -12,32 +12,29 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/space_settings")
+@RequestMapping("/api/v1/spaces/{workspaceId}/settings")
+@SecurityRequirement(name = "JWT")
 public class SpaceSettingsController {
     private final SpaceSettingsService spaceSettingsService;
 
-    @SecurityRequirement(name = "JWT")
-    @GetMapping("/{id}")
-    public ResponseEntity<SpaceSettingsDto> getSpaceSettings(@PathVariable Long id) {
-        return new ResponseEntity<>(spaceSettingsService.findSpaceSettingsById(id), HttpStatus.OK);
+    @GetMapping("/{settingsId}")
+    public ResponseEntity<SpaceSettingsDto> getSpaceSettings(@AuthenticationPrincipal UserDetails user, @PathVariable Long settingsId, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(spaceSettingsService.findSpaceSettingsById(settingsId, user), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @PostMapping("/save_settings")
-    public ResponseEntity<SpaceSettingsDto> saveSettings(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceSettingsDto spaceSettingsDto) {
-        return new ResponseEntity<>(spaceSettingsService.saveSpaceSettings(spaceSettingsDto, user), HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<SpaceSettingsDto> saveSettings(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceSettingsDto spaceSettingsDto, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(spaceSettingsService.saveSpaceSettings(spaceSettingsDto, user), HttpStatus.CREATED);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @PostMapping("/update_settings")
-    public ResponseEntity<SpaceSettingsDto> updateSettings(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceSettingsDto spaceSettingsDto) {
-        return new ResponseEntity<>(spaceSettingsService.updateSpaceSettings(spaceSettingsDto, user), HttpStatus.OK);
+    @PutMapping("/{settingsId}")
+    public ResponseEntity<SpaceSettingsDto> updateSettings(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceSettingsDto spaceSettingsDto, @PathVariable Long settingsId, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(spaceSettingsService.updateSpaceSettings(spaceSettingsDto, user, settingsId), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @DeleteMapping("/delete_settings/{id}")
-    public ResponseEntity<SpaceSettingsDto> deleteSettings(@PathVariable Long id) {
-        spaceSettingsService.removeSpaceSettingsById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{settingsId}")
+    public ResponseEntity<HttpStatus> deleteSettings(@AuthenticationPrincipal UserDetails user, @PathVariable Long settingsId, @PathVariable Long workspaceId) {
+        spaceSettingsService.removeSpaceSettingsById(settingsId, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -27,6 +27,7 @@ public class UserEntity implements UserDetails {
     @Builder.Default
     private Role role = Role.USER;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @Builder.Default
     private final LocalDateTime registrationDateTime = LocalDateTime.now();
 
     @Override

@@ -3,6 +3,8 @@ package org.example.controllers;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.example.domain.dto.WorkspaceDto;
+import org.example.domain.dto.requests.WorkspaceCreateRequest;
+import org.example.domain.dto.requests.WorkspaceUpdateRequest;
 import org.example.services.WorkspaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,38 +16,34 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/workspace")
+@RequestMapping("/api/v1/spaces")
+@SecurityRequirement(name = "JWT")
 public class WorkspaceController {
     private final WorkspaceService workspaceService;
 
-    @SecurityRequirement(name = "JWT")
     @GetMapping
-    public ResponseEntity<List<WorkspaceDto>> findAllWorkspaces() {
-        return new ResponseEntity<>(workspaceService.findAllWorkspaces(), HttpStatus.OK);
+    public ResponseEntity<List<WorkspaceDto>> findAllWorkspaces(@AuthenticationPrincipal UserDetails user) {
+        return new ResponseEntity<>(workspaceService.findAllWorkspaces(user), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @GetMapping("/{id}")
-    public ResponseEntity<WorkspaceDto> findWorkspaceById(@PathVariable Long id) {
-        return new ResponseEntity<>(workspaceService.findWorkspaceById(id), HttpStatus.OK);
+    @GetMapping("/{workspaceId}")
+    public ResponseEntity<WorkspaceDto> findWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(workspaceService.findWorkspaceById(workspaceId, user), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @PostMapping("/save_workspace")
-    public ResponseEntity<WorkspaceDto> createWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceDto workspace) {
-        return new ResponseEntity<>(workspaceService.saveWorkspace(workspace, user), HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<WorkspaceDto> createWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceCreateRequest workspace) {
+        return new ResponseEntity<>(workspaceService.createWorkspace(workspace, user), HttpStatus.CREATED);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @PostMapping("/update_workspace")
-    public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceDto workspace) {
-        return new ResponseEntity<>(workspaceService.updateWorkspace(workspace, user), HttpStatus.OK);
+    @PutMapping("/{workspaceId}")
+    public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceUpdateRequest workspace,  @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(workspaceService.updateWorkspace(workspace, user, workspaceId), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @DeleteMapping("/delete_workspace/{id}")
-    public ResponseEntity<HttpStatus> deleteWorkspaceById(@PathVariable Long id) {
-        workspaceService.deleteWorkspaceById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{workspaceId}")
+    public ResponseEntity<HttpStatus> deleteWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long workspaceId) {
+        workspaceService.deleteWorkspaceById(workspaceId, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

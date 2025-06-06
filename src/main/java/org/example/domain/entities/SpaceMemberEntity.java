@@ -1,11 +1,17 @@
 package org.example.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,6 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 @Accessors(chain = true)
 @Table(schema = "space_service", name = "members")
+@ToString
 public class SpaceMemberEntity {
     @Getter
     public enum Role {
@@ -27,19 +34,30 @@ public class SpaceMemberEntity {
     }
 
     @Id
-    @SequenceGenerator(name = "member_seq", sequenceName = "member_sequence")
+    @SequenceGenerator(name = "members_seq", sequenceName = "members_sequence")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long memberId;
+    @Column(name = "space_member_id")
+    private Long spaceMemberId;
 
+    // Совпадает с Id пользователя в auth-service
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Role role = Role.READER;
 
-    @JsonFormat(pattern = "dd-mm-yyyy HH:MM")
-    private LocalDateTime invitedDateTime;
+    @Column(name = "invited_date_time", nullable = false, updatable = false)
+    @CreatedDate
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+    @Builder.Default
+    private LocalDateTime invitedDateTime = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invited_by_member")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private SpaceMemberEntity invitedByMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
