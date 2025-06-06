@@ -8,15 +8,15 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 
 @OpenAPIDefinition (servers = {
-        @Server(url = "http://${SERVER_IP:localhost}:${SERVER_HTTP_PORT:8085}${SWAGGER_PREFIX:}", description = "Server")},
-        info = @Info(
-                title = "Сервис рабочих пространств",
-                description = "А я Максу помогаю", version = "1.0.0",
-                contact = @Contact(
-                        name = "Черников Антон",
-                        url = "https://t.me/tyques"
-                )
-        )
+        @Server(url = "http://${SERVER_IP:localhost}:${SERVER_HTTP_PORT:8085}${SWAGGER_PREFIX:}", description = "Server")}
+//        info = @Info(
+//                title = "Сервис рабочих пространств",
+//                description = "А я Максу помогаю", version = "1.0.0",
+//                contact = @Contact(
+//                        name = "Черников Антон",
+//                        url = "https://t.me/tyques"
+//                )
+//        )
 )
 @SecurityScheme(
         name = "JWT",
