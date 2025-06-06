@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
+// С этим классом надо будет потом жеско разбираться...
 @Slf4j
 @RestControllerAdvice
 public class ExceptionResponseHandler {

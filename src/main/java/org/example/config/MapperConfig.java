@@ -14,6 +14,7 @@ public class MapperConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.LOOSE)
+            // Если установить значение false, то при встрече с неоднозначными свойствами будет выбрасываться исключение ConfigurationException
                 .setAmbiguityIgnored(true);
 
         modelMapper.createTypeMap(SpaceMemberAddRequest.class, SpaceMemberEntity.class)
