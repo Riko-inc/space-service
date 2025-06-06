@@ -1,5 +1,6 @@
 package org.example.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class SpaceMemberDto {
-    private Long memberId;                  // Совпадает с userId из auth-service
+    private Long spaceMemberId;
+    private Long userId;                    // Совпадает с userId из auth-service
     private SpaceMemberEntity.Role role;
     private LocalDateTime invitedDateTime;
-    private SpaceMemberDto invitedByMember;
-
+    private Long invitedBySpaceMemberId;
+    private Long workspaceId;
 }

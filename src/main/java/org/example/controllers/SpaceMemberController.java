@@ -8,38 +8,40 @@ import org.example.domain.dto.requests.SpaceMemberUpdateRequest;
 import org.example.services.SpaceMemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/space/member")
+@RequestMapping("/api/v1/spaces/{workspaceId}/members")
+@SecurityRequirement(name = "JWT")
 public class SpaceMemberController {
     private final SpaceMemberService spaceMemberService;
 
-    @SecurityRequirement(name = "JWT")
-    @GetMapping("/{id}")
-    public ResponseEntity<SpaceMemberDto> getSpaceMember(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
-        return new ResponseEntity<>(spaceMemberService.findSpaceMemberById(id, user), HttpStatus.OK);
+    @GetMapping("/{memberId}")
+    @PreAuthorize("@AccessService.isWorkspaceReader(#user, #workspaceId)")
+    public ResponseEntity<SpaceMemberDto> getSpaceMember(@AuthenticationPrincipal UserDetails user, @PathVariable Long memberId, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(spaceMemberService.findSpaceMemberById(user, workspaceId, memberId), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
     @PostMapping
-    public ResponseEntity<SpaceMemberDto> addSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberAddRequest request) {
-        return new ResponseEntity<>(spaceMemberService.addSpaceMember(request, user), HttpStatus.CREATED);
+    @PreAuthorize("@AccessService.isWorkspaceOwner(#user, #workspaceId)")
+    public ResponseEntity<SpaceMemberDto> addSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberAddRequest request, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(spaceMemberService.addSpaceMember(user, request, workspaceId), HttpStatus.CREATED);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @PutMapping("/{id}")
-    public ResponseEntity<SpaceMemberDto> updateSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberUpdateRequest request, @PathVariable Long id) {
-        return new ResponseEntity<>(spaceMemberService.updateSpaceMember(request, user, id), HttpStatus.OK);
+    @PutMapping("/{memberId}")
+    @PreAuthorize("@AccessService.isWorkspaceOwner(#user, #workspaceId)")
+    public ResponseEntity<SpaceMemberDto> updateSpaceMember(@AuthenticationPrincipal UserDetails user, @RequestBody SpaceMemberUpdateRequest request, @PathVariable Long memberId, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(spaceMemberService.updateSpaceMember(user, request, memberId, workspaceId), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<SpaceMemberDto> deleteSpaceMember(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
-        spaceMemberService.deleteSpaceMember(id, user);
+    @DeleteMapping("/{memberId}")
+    @PreAuthorize("@AccessService.isWorkspaceOwner(#user, #workspaceId)")
+    public ResponseEntity<HttpStatus> deleteSpaceMember(@AuthenticationPrincipal UserDetails user, @PathVariable Long memberId, @PathVariable Long workspaceId) {
+        spaceMemberService.deleteSpaceMember(user, memberId, workspaceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -17,6 +17,6 @@ public class WorkspaceCreateRequest {
     private String workspaceDescription;
 
     @Schema(description = "Префикс для задач пространства", example = "DEV")
-    @Size(max = 5, message = "Префикс для задач не должен быть длиннее 5 символов")
+    @Size(min = 2, max = 6, message = "Префикс для задач не должен быть длиннее 5 символов")
     private String taskPrefix;
 }

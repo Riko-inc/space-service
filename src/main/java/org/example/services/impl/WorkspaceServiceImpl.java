@@ -29,9 +29,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private final SpaceMemberRepository spaceMemberRepository;
     private final Mapper<WorkspaceEntity, WorkspaceDto> mapper;
     private final Mapper<WorkspaceEntity, WorkspaceCreateRequest> workspaceCreateRequestMapper;
-    private final Mapper<WorkspaceEntity, WorkspaceUpdateRequest> workspaceUpdateRequestMapper;
 
-    // Пока получаем все пространства. Потом только те, в которых мы мемберы
+    // Пока получаем все пространства. Потом сделаю чтоб только те, в которых мы мемберы
     @Override
     public List<WorkspaceDto> findAllWorkspaces(UserDetails user) {
         return workspaceRepository.findAll().stream().map(mapper::mapToDto).toList();
@@ -51,19 +50,15 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .workspace(workspace)
                 .build());
 
-        WorkspaceEntity savedWorkspace = workspaceRepository.save(workspace);
-
         SpaceMemberEntity owner = SpaceMemberEntity.builder()
                 .role(SpaceMemberEntity.Role.OWNER)
                 .userId(userEntity.getUserId())
-                .workspace(savedWorkspace)
+                .workspace(workspace)
                 .build();
 
-//        SpaceMemberEntity savedOwner = spaceMemberRepository.save(owner);
+        workspace.setMembers(new ArrayList<>(List.of(owner)));
 
-        savedWorkspace.setMembers(new ArrayList<>(List.of(owner)));
-
-        return mapper.mapToDto(workspaceRepository.save(savedWorkspace));
+        return mapper.mapToDto(workspaceRepository.save(workspace));
     }
 
     @Override
@@ -76,18 +71,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         workspace.setWorkspaceDescription(workspaceUpdateRequest.getWorkspaceDescription());
         workspace.setWorkspaceName(workspaceUpdateRequest.getWorkspaceName());
 
-//        workspaceUpdateRequest.getMembers().forEach(newMember -> {
-//            if (spaceMemberRepository.findById(newMember.getMemberId()).isEmpty()) {
-//                spaceMemberRepository.save(SpaceMemberEntity.builder()
-//                        .userId(newMember.getMemberId())
-//                        .role(newMember.getRole())
-//                        .workspace(workspace)
-//                        .invitedByMember((spaceMemberRepository.findById(userEntity.getUserId())
-//                                .orElseThrow(() -> new EntityNotFoundException("Member who invited with id " + newMember.getMemberId() + " was not found"))))
-//                        .build());
-//            }
-//        });
-        return mapper.mapToDto(workspaceRepository.save(workspaceUpdateRequestMapper.mapFromDto(workspaceUpdateRequest)));
+        return mapper.mapToDto(workspaceRepository.saveAndFlush(workspace));
     }
 
     @Override

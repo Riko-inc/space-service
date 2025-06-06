@@ -16,38 +16,34 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/workspace")
+@RequestMapping("/api/v1/spaces")
+@SecurityRequirement(name = "JWT")
 public class WorkspaceController {
     private final WorkspaceService workspaceService;
 
-    @SecurityRequirement(name = "JWT")
     @GetMapping
     public ResponseEntity<List<WorkspaceDto>> findAllWorkspaces(@AuthenticationPrincipal UserDetails user) {
         return new ResponseEntity<>(workspaceService.findAllWorkspaces(user), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @GetMapping("/{id}")
-    public ResponseEntity<WorkspaceDto> findWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
-        return new ResponseEntity<>(workspaceService.findWorkspaceById(id, user), HttpStatus.OK);
+    @GetMapping("/{workspaceId}")
+    public ResponseEntity<WorkspaceDto> findWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(workspaceService.findWorkspaceById(workspaceId, user), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
     @PostMapping
     public ResponseEntity<WorkspaceDto> createWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceCreateRequest workspace) {
         return new ResponseEntity<>(workspaceService.createWorkspace(workspace, user), HttpStatus.CREATED);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @PutMapping("/{id}")
-    public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceUpdateRequest workspace,  @PathVariable Long id) {
-        return new ResponseEntity<>(workspaceService.updateWorkspace(workspace, user, id), HttpStatus.OK);
+    @PutMapping("/{workspaceId}")
+    public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceUpdateRequest workspace,  @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(workspaceService.updateWorkspace(workspace, user, workspaceId), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "JWT")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
-        workspaceService.deleteWorkspaceById(id, user);
+    @DeleteMapping("/{workspaceId}")
+    public ResponseEntity<HttpStatus> deleteWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long workspaceId) {
+        workspaceService.deleteWorkspaceById(workspaceId, user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

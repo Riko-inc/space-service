@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 @Accessors(chain = true)
 @Table(schema = "space_service", name = "members")
+@ToString
 public class SpaceMemberEntity {
     @Getter
     public enum Role {
@@ -54,7 +56,7 @@ public class SpaceMemberEntity {
     private LocalDateTime invitedDateTime = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invited_by_member", updatable = false)
+    @JoinColumn(name = "invited_by_member")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private SpaceMemberEntity invitedByMember;
 

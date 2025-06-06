@@ -1,5 +1,6 @@
 package org.example.domain.dto.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,7 +18,9 @@ public class SpaceMemberAddRequest {
     @NotNull(message = "Роль пользователя не должна быть пустой")
     private SpaceMemberEntity.Role role;
 
-    @Schema(description = "Id пространства, в которое добавляется пользователь")
-    @NotNull(message = "Id пространства не должен быть пустым")
+    @JsonIgnore
+    private Long invitedByMemberId;
+
+    @JsonIgnore
     private Long workspaceId;
 }

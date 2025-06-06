@@ -6,8 +6,8 @@ import org.example.domain.dto.requests.SpaceMemberUpdateRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface SpaceMemberService {
-    SpaceMemberDto addSpaceMember(SpaceMemberAddRequest spaceMemberAddRequest, UserDetails user);
-    SpaceMemberDto updateSpaceMember(SpaceMemberUpdateRequest spaceMemberUpdateRequest, UserDetails user, Long spaceMemberId);
-    SpaceMemberDto findSpaceMemberById(Long id, UserDetails user);
-    void deleteSpaceMember(Long id, UserDetails user);
+    SpaceMemberDto addSpaceMember(UserDetails user, SpaceMemberAddRequest spaceMemberAddRequest, Long workspaceId);
+    SpaceMemberDto updateSpaceMember(UserDetails user, SpaceMemberUpdateRequest spaceMemberUpdateRequest, Long workspaceId, Long spaceMemberId);
+    SpaceMemberDto findSpaceMemberById(UserDetails user, Long spaceMemberId, Long workspaceId);
+    void deleteSpaceMember(UserDetails user, Long spaceMemberId, Long workspaceId);
 }
