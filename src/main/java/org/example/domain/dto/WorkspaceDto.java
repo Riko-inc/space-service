@@ -1,5 +1,6 @@
 package org.example.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +20,6 @@ public class WorkspaceDto {
     private String taskPrefix;
     private LocalDateTime createdDateTime;
     private LocalDateTime updatedDateTime;
+    @JsonIgnore
     private List<SpaceMemberDto> members;
 }

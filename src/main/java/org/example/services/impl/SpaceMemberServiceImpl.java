@@ -18,6 +18,9 @@ import org.example.services.SpaceMemberService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -78,6 +81,13 @@ public class SpaceMemberServiceImpl implements SpaceMemberService {
     public SpaceMemberDto findSpaceMemberById(UserDetails user, Long spaceMemberId, Long workspaceId) {
         return responseMapper.mapToDto(spaceMemberRepository.findById(spaceMemberId)
                 .orElseThrow(() -> new EntityNotFoundException("Member " + spaceMemberId + " not found")));
+    }
+
+    @Override
+    public List<SpaceMemberDto> findAllSpaceMembers(UserDetails user, Long workspaceId) {
+        UserEntity userEntity = (UserEntity) user;
+        return spaceMemberRepository.findAllByUserIdAndWorkspace_WorkspaceId(userEntity.getUserId(), workspaceId)
+                .stream().map(responseMapper::mapToDto).toList();
     }
 
     @Override
