@@ -3,10 +3,12 @@ package org.example.domain.dto.requests;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Schema(description = "Запрос на создание нового пространства")
+@Builder
 public class WorkspaceCreateRequest {
     @Schema(description = "Название пространства", example = "MyAwesomeWorkspace")
     @Size(min = 1, max = 255, message = "Название пространства должно быть не длиннее 255 символов")
