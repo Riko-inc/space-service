@@ -13,12 +13,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/spaces/{workspaceId}/members")
 @SecurityRequirement(name = "JWT")
 public class SpaceMemberController {
     private final SpaceMemberService spaceMemberService;
+
+    @GetMapping
+    @PreAuthorize("@AccessService.isWorkspaceReader(#user, #workspaceId)")
+    public ResponseEntity<List<SpaceMemberDto>> getAllSpaceMembers(@AuthenticationPrincipal UserDetails user, @PathVariable Long workspaceId) {
+        return new ResponseEntity<>(spaceMemberService.findAllSpaceMembers(user, workspaceId), HttpStatus.OK);
+    }
 
     @GetMapping("/{memberId}")
     @PreAuthorize("@AccessService.isWorkspaceReader(#user, #workspaceId)")
