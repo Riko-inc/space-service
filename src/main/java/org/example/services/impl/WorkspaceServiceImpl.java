@@ -10,10 +10,13 @@ import org.example.domain.entities.SpaceMemberEntity;
 import org.example.domain.entities.SpaceSettingsEntity;
 import org.example.domain.entities.UserEntity;
 import org.example.domain.entities.WorkspaceEntity;
+import org.example.domain.enums.EventType;
 import org.example.mappers.Mapper;
 import org.example.repositories.SpaceMemberRepository;
 import org.example.repositories.WorkspaceRepository;
 import org.example.services.WorkspaceService;
+import org.example.utils.PublishDtoEvent;
+import org.example.utils.PublishStringEvent;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +46,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Transactional
     @Override
+    @PublishDtoEvent(eventType = EventType.SPACE_CREATED, topic = "space-events", payloadClass = WorkspaceDto.class)
     public WorkspaceDto createWorkspace(WorkspaceCreateRequest workspaceCreateRequest, UserDetails user) {
         UserEntity userEntity = (UserEntity) user;
         WorkspaceEntity workspace = workspaceCreateRequestMapper.mapFromDto(workspaceCreateRequest);

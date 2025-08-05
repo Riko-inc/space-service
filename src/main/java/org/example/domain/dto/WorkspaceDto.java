@@ -20,5 +20,4 @@ public class WorkspaceDto {
     private LocalDateTime createdDateTime;
     private LocalDateTime updatedDateTime;
     private List<SpaceMemberDto> members;
-    private SpaceSettingsDto settings;
 }
