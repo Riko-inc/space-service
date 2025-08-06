@@ -32,7 +32,7 @@ public class WorkspaceEntity {
     @Column(name = "workspace_description")
     private String workspaceDescription;
 
-    @Column(name = "task_prefix", nullable = false, updatable = false)
+    @Column(name = "task_prefix", unique = true, nullable = false, updatable = false)
     private String taskPrefix;
 
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)

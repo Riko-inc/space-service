@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface WorkspaceService {
     List<WorkspaceDto> findAllWorkspaces(UserDetails user);
-    List<SpaceMemberDto> findAllSpaceMembers(WorkspaceCreateRequest workspaceCreateRequest, UserDetails user);
     WorkspaceDto createWorkspace(WorkspaceCreateRequest workspaceCreateRequest, UserDetails user);
     WorkspaceDto updateWorkspace(WorkspaceUpdateRequest workspaceUpdateRequest, UserDetails user, Long workspaceId);
     WorkspaceDto findWorkspaceById(Long id, UserDetails user);

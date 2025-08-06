@@ -8,6 +8,7 @@ import org.example.domain.dto.requests.WorkspaceUpdateRequest;
 import org.example.services.WorkspaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class WorkspaceController {
     }
 
     @GetMapping("/{workspaceId}")
+    @PreAuthorize("@AccessService.isWorkspaceReader(#user, #workspaceId)")
     public ResponseEntity<WorkspaceDto> findWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long workspaceId) {
         return new ResponseEntity<>(workspaceService.findWorkspaceById(workspaceId, user), HttpStatus.OK);
     }
@@ -37,11 +39,13 @@ public class WorkspaceController {
     }
 
     @PutMapping("/{workspaceId}")
+    @PreAuthorize("@AccessService.isWorkspaceOwner(#user, #workspaceId)")
     public ResponseEntity<WorkspaceDto> updateWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceUpdateRequest workspace,  @PathVariable Long workspaceId) {
         return new ResponseEntity<>(workspaceService.updateWorkspace(workspace, user, workspaceId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{workspaceId}")
+    @PreAuthorize("@AccessService.isWorkspaceOwner(#user, #workspaceId)")
     public ResponseEntity<HttpStatus> deleteWorkspaceById(@AuthenticationPrincipal UserDetails user, @PathVariable Long workspaceId) {
         workspaceService.deleteWorkspaceById(workspaceId, user);
         return new ResponseEntity<>(HttpStatus.OK);

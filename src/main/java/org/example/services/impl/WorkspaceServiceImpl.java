@@ -11,6 +11,7 @@ import org.example.domain.entities.SpaceSettingsEntity;
 import org.example.domain.entities.UserEntity;
 import org.example.domain.entities.WorkspaceEntity;
 import org.example.domain.enums.EventType;
+import org.example.exceptions.InvalidRequestParameterException;
 import org.example.mappers.Mapper;
 import org.example.repositories.SpaceMemberRepository;
 import org.example.repositories.WorkspaceRepository;
@@ -33,21 +34,23 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private final Mapper<WorkspaceEntity, WorkspaceDto> mapper;
     private final Mapper<WorkspaceEntity, WorkspaceCreateRequest> workspaceCreateRequestMapper;
 
-    // Пока получаем все пространства. Потом сделаю чтоб только те, в которых мы мемберы
     @Override
     public List<WorkspaceDto> findAllWorkspaces(UserDetails user) {
-        return workspaceRepository.findAll().stream().map(mapper::mapToDto).toList();
-    }
-
-    @Override
-    public List<SpaceMemberDto> findAllSpaceMembers(WorkspaceCreateRequest workspace, UserDetails user) {
-        return List.of();
+        UserEntity userEntity = (UserEntity) user;
+        return workspaceRepository.findByMembersUserId(userEntity.getUserId())
+                .stream()
+                .map(mapper::mapToDto)
+                .toList();
     }
 
     @Transactional
     @Override
     @PublishDtoEvent(eventType = EventType.SPACE_CREATED, topic = "space-events", payloadClass = WorkspaceDto.class)
     public WorkspaceDto createWorkspace(WorkspaceCreateRequest workspaceCreateRequest, UserDetails user) {
+        if (workspaceRepository.existsByTaskPrefix(workspaceCreateRequest.getTaskPrefix())) {
+            throw new InvalidRequestParameterException("Space with task prefix {} already exists", workspaceCreateRequest.getTaskPrefix());
+        }
+
         UserEntity userEntity = (UserEntity) user;
         WorkspaceEntity workspace = workspaceCreateRequestMapper.mapFromDto(workspaceCreateRequest);
         workspace.setSettings(SpaceSettingsEntity.builder()
