@@ -9,6 +9,5 @@ import java.util.Optional;
 
 public interface SpaceMemberRepository extends JpaRepository<SpaceMemberEntity, Long> {
     Optional<SpaceMemberEntity> findSpaceMemberEntityByUserIdAndWorkspace_WorkspaceId(Long userId, Long workspaceId);
-
     List<SpaceMemberEntity> findAllByUserIdAndWorkspace_WorkspaceId(Long userId, Long workspaceId);
 }
