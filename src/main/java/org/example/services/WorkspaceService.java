@@ -14,4 +14,5 @@ public interface WorkspaceService {
     WorkspaceDto updateWorkspace(WorkspaceUpdateRequest workspaceUpdateRequest, UserDetails user, Long workspaceId);
     WorkspaceDto findWorkspaceById(Long id, UserDetails user);
     void deleteWorkspaceById(Long id, UserDetails user);
+    WorkspaceDto findWorkspaceByPrefix(String prefix, UserDetails user);
 }

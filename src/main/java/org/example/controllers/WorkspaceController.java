@@ -33,6 +33,12 @@ public class WorkspaceController {
         return new ResponseEntity<>(workspaceService.findWorkspaceById(workspaceId, user), HttpStatus.OK);
     }
 
+    @GetMapping("/{workspacePrefix}/prefix")
+    @PreAuthorize("@AccessService.isWorkspaceReaderPrefix(#user, #workspacePrefix)")
+    public ResponseEntity<WorkspaceDto> findWorkspaceByPrefix(@AuthenticationPrincipal UserDetails user, @PathVariable String workspacePrefix) {
+        return new ResponseEntity<>(workspaceService.findWorkspaceByPrefix(workspacePrefix, user), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<WorkspaceDto> createWorkspace(@AuthenticationPrincipal UserDetails user, @RequestBody WorkspaceCreateRequest workspace) {
         return new ResponseEntity<>(workspaceService.createWorkspace(workspace, user), HttpStatus.CREATED);

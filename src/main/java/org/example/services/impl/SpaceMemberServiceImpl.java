@@ -19,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -40,26 +39,28 @@ public class SpaceMemberServiceImpl implements SpaceMemberService {
                 .findById(workspaceId)
                 .orElseThrow(() -> new EntityNotFoundException("Workspace with id "+ workspaceId +" not found"));
 
-        // Проверка, что пользователь, которого добавляем существует
+        // Проверка, что пользователь, которого добавляем существует в auth-service
         if (!authService.checkUserIdExists(request.getUserId())) {
             throw new EntityNotFoundException("User with id " + request.getUserId() + " not found");
         }
 
-        // Проверка, что пользователь, которого добавляем не в пространстве
-        if (spaceMemberRepository.findSpaceMemberEntityByUserIdAndWorkspace_WorkspaceId(request.getUserId(), workspaceId).isPresent()) {
+        // Проверка, что пользователь, которого добавляем не состоит в пространстве
+        if (spaceMemberRepository.findSpaceMemberEntityByUserIdAndWorkspace(request.getUserId(), workspace).isPresent()) {
             throw new InvalidRequestParameterException("Space member with user id " + request.getUserId() + " already exists in this space");
         }
 
-        SpaceMemberEntity inviterSpaceEntity = spaceMemberRepository.findSpaceMemberEntityByUserIdAndWorkspace_WorkspaceId(userEntity.getUserId(), workspaceId)
+        SpaceMemberEntity inviterSpaceEntity = spaceMemberRepository.findSpaceMemberEntityByUserIdAndWorkspace(userEntity.getUserId(), workspace)
                 .orElseThrow(() -> new EntityNotFoundException("Invited user with id " + userEntity.getUserId() + " not found"));
 
         request.setInvitedByMemberId(inviterSpaceEntity.getSpaceMemberId());
         request.setWorkspaceId(workspaceId);
 
-        log.info("Created UserEntity from request DTO: {}", createRequestMapper.mapFromDto(request));
+        log.info("Created space member entity from request DTO: {}", createRequestMapper.mapFromDto(request));
 
         SpaceMemberEntity newEntity = spaceMemberRepository.save(createRequestMapper.mapFromDto(request));
 
+        workspace.getMembers().add(newEntity);
+        workspaceRepository.save(workspace);
         log.info("New space member entity: {}", newEntity);
 
         return responseMapper.mapToDto(newEntity);
@@ -79,15 +80,36 @@ public class SpaceMemberServiceImpl implements SpaceMemberService {
 
     @Override
     public SpaceMemberDto findSpaceMemberById(UserDetails user, Long spaceMemberId, Long workspaceId) {
-        return responseMapper.mapToDto(spaceMemberRepository.findById(spaceMemberId)
+        WorkspaceEntity workspace = workspaceRepository
+                .findById(workspaceId)
+                .orElseThrow(() -> new EntityNotFoundException("Workspace with id "+ workspaceId +" not found"));
+
+        return responseMapper.mapToDto(spaceMemberRepository.findSpaceMemberEntityBySpaceMemberIdAndWorkspace(spaceMemberId, workspace)
                 .orElseThrow(() -> new EntityNotFoundException("Member " + spaceMemberId + " not found")));
     }
 
+    // TODO: Накинуть на контроллеры проверку прав просмотра
     @Override
     public List<SpaceMemberDto> findAllSpaceMembers(UserDetails user, Long workspaceId) {
         UserEntity userEntity = (UserEntity) user;
-        return spaceMemberRepository.findAllByUserIdAndWorkspace_WorkspaceId(userEntity.getUserId(), workspaceId)
+        WorkspaceEntity workspace = workspaceRepository
+                .findById(workspaceId)
+                .orElseThrow(() -> new EntityNotFoundException("Workspace with id "+ workspaceId +" not found"));
+
+        return spaceMemberRepository.findByWorkspace(workspace)
                 .stream().map(responseMapper::mapToDto).toList();
+    }
+
+    @Override
+    public SpaceMemberDto findByUserIdAndSpace(UserDetails user, Long workspaceId) {
+        UserEntity userEntity = (UserEntity) user;
+        WorkspaceEntity workspace = workspaceRepository
+                .findById(workspaceId)
+                .orElseThrow(() -> new EntityNotFoundException("Workspace with id "+ workspaceId +" not found"));
+
+
+        return responseMapper.mapToDto(spaceMemberRepository.findByUserIdAndWorkspace(userEntity.getUserId(), workspace)
+                .orElseThrow(() -> new EntityNotFoundException("User with id "+ userEntity.getUserId() +" was not found in this space")));
     }
 
     @Override

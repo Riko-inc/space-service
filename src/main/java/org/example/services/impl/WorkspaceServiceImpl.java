@@ -91,4 +91,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         return mapper.mapToDto(workspaceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Workspace " + id + " not found")));
     }
+
+    @Override
+    public WorkspaceDto findWorkspaceByPrefix(String prefix, UserDetails user) {
+        return mapper.mapToDto(workspaceRepository.findByTaskPrefix(prefix)
+                .orElseThrow(() -> new EntityNotFoundException("Workspace with prefix " + prefix + " not found")));
+    }
 }

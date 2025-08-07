@@ -12,5 +12,6 @@ public interface SpaceMemberService {
     SpaceMemberDto updateSpaceMember(UserDetails user, SpaceMemberUpdateRequest spaceMemberUpdateRequest, Long workspaceId, Long spaceMemberId);
     SpaceMemberDto findSpaceMemberById(UserDetails user, Long spaceMemberId, Long workspaceId);
     List<SpaceMemberDto> findAllSpaceMembers(UserDetails user, Long workspaceId);
+    SpaceMemberDto findByUserIdAndSpace(UserDetails user, Long workspaceId);
     void deleteSpaceMember(UserDetails user, Long spaceMemberId, Long workspaceId);
 }

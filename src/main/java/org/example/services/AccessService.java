@@ -31,6 +31,15 @@ public class AccessService {
         return roles.stream().anyMatch(role -> role == SpaceMemberEntity.Role.READER);
     }
 
+    public boolean isWorkspaceReaderPrefix(UserDetails userDetails, String taskPrefix) {
+        WorkspaceEntity workspace = workspaceRepository
+                .findByTaskPrefix(taskPrefix)
+                .orElseThrow(() -> new EntityNotFoundException("Workspace with id "+ taskPrefix +" not found"));
+
+        List<SpaceMemberEntity.Role> roles = getAllRoles(userDetails, workspace.getWorkspaceId());
+        return roles.stream().anyMatch(role -> role == SpaceMemberEntity.Role.READER);
+    }
+
     public boolean isWorkspaceOwner(UserDetails userDetails, Long workspaceId) {
         List<SpaceMemberEntity.Role> roles = getAllRoles(userDetails, workspaceId);
         return roles.stream().anyMatch(role -> role == SpaceMemberEntity.Role.OWNER);
@@ -39,9 +48,13 @@ public class AccessService {
     private List<SpaceMemberEntity.Role> getAllRoles(UserDetails userDetails, Long workspaceId) {
         UserEntity userEntity = (UserEntity) userDetails;
 
+        WorkspaceEntity workspace = workspaceRepository
+                .findById(workspaceId)
+                .orElseThrow(() -> new EntityNotFoundException("Workspace with id "+ workspaceId +" not found"));
+
         log.info("Looking for space members in workspace: {} with user id: {}", workspaceId, userEntity.getUserId());
 
-        SpaceMemberEntity memberEntity = spaceMemberRepository.findSpaceMemberEntityByUserIdAndWorkspace_WorkspaceId(userEntity.getUserId(), workspaceId)
+        SpaceMemberEntity memberEntity = spaceMemberRepository.findSpaceMemberEntityByUserIdAndWorkspace(userEntity.getUserId(), workspace)
                 .orElseThrow(() -> new EntityNotFoundException("Member or workspace was not found"));
 
 
